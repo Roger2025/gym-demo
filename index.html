@@ -88,7 +88,8 @@
         </thead>
     </table>
     <p>
-        <b>計算BMI:&copy;</b>一位民眾身高160公分
+        <b><a href="bmi.html">計算BMI</a>
+            &copy;</b>一位民眾身高160公分
         體重60公斤，BMI=體重（公斤）÷身高（公尺）的平方<br>
         BMI=60÷(1.6×1.6)=23.4<br>
         <b>計算所需熱量:</b>根據世界衛生組織的標準，BMI在18.5到24.9之間被認為是正常體重範圍。<br>
@@ -109,10 +110,29 @@
         frameborder="0" allow="accelerometer; autoplay; 
     clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-    <video width="45%" height="385" controls>
+    <video width="100%" height="385" controls>
         <source src="video/IMG_2288.MOV" type="video/mp4">
         您的瀏覽器不支援視頻播放。
     </video>
+    <hr>
+    <h2>表單</h2>
+    <h3>需要更多資訊?免費索取健身資訊</h3>
+    <p>前100名還贈送［我愛健身］書籍一本!</p>
+    <form action="">
+        <input type="checkbox" name="age">18歲
+        <select name="city" id="">
+            <option value="台北市">台北市</option>
+            <option value="新北市">新北市</option>
+            <option value="桃園市">桃園市</option>
+            <option value="新竹市">新竹市</option>
+        </select>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="A127038349@gmail.com">
+        <p>您的寶貴意見:</p>
+        <textarea id="comment" name="comment" cols="30" rows="20"></textarea>
+        <br>
+        <button type="submit">送出!</button>
+    </form>
 
 
 
