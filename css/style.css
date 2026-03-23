@@ -1,0 +1,75 @@
+body {
+            text-align: center;
+            background-color: rgb(238, 240, 146);
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        .sub-title {
+            background-color: aqua;
+            color: blue;
+        }
+
+        .content {
+            background-color: tomato;
+            padding: 12px 24px;
+        }
+
+        #image {
+            background-color: tomato;
+            border-radius: 10px;
+            border: solid 2px black;
+        }
+
+        #image img {
+            margin: 12px;
+            width: 30%;
+            border-radius: 10px;
+        }
+
+        #bmiTable {
+            width: 60%;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        #bmiTable th {
+            background-color: chartreuse;
+        }
+
+        #bmiTable td {
+            background-color: cadetblue;
+            color: white;
+            text-align: center;
+        }
+
+        .c-bmi {
+            text-align: left;
+            margin-left: 20px;
+        }
+
+        #bmiTable td:first-child {
+            background-color: coral;
+        }
+
+        h2 {
+            display: inline-block;
+            width: 500px;
+            border: solid 2px black;
+        }
+
+        form {
+            background-color: rgb(39, 153, 55);
+            border: solid 2px black;
+            width: 40%;
+            display: inline-block;
+            padding: 12px 12px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+
+        button {
+            color: white;
+            background-color: red;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 34px;
+        }

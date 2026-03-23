@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 頻道成長與市場動態分析報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS overrides and specific components */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            /* Tailwind slate-50 */
+            color: #334155;
+            /* Tailwind slate-700 */
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .tab-btn.active {
+            border-bottom: 2px solid #ef4444;
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+    <!-- Chosen Palette: Warm Neutrals with Subtle YouTube Red Accent (Slate-50 bg, White cards, Slate-700 text, Red-500 accent) -->
+    <!-- Application Structure Plan: A dashboard-style layout with a sticky top navigation tab system. 
+         Sections include: 1. Executive Summary, 2. Market Trends (VOD/Shorts/Live), 3. Shorts Strategy (Main vs Sub channel), 4. Live Analysis.
+         This structure allows the user to digest the broad trends first, then drill down into specific questions (Shorts strategy, Live features) interactively. -->
+    <!-- Visualization & Content Choices: 
+         - Trend line chart (Chart.js): Goal - Compare growth. Interaction - Hover tooltips.
+         - Radar chart (Chart.js): Goal - Compare format strengths.
+         - Interactive Decision Tree (HTML/JS): Goal - Help user decide on Main vs. Second channel for Shorts.
+         CONFIRMING NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <div class="text-2xl font-bold text-slate-800 tracking-tight">
+                        <span class="text-red-500 mr-1">▶</span>YT 成長戰略板
+                    </div>
+                </div>
+            </div>
+            <!-- Tabs -->
+            <div class="flex space-x-6 overflow-x-auto" id="nav-tabs">
+                <button onclick="switchTab('overview')"
+                    class="tab-btn active pb-3 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap"
+                    data-target="overview">整體趨勢分析</button>
+                <button onclick="switchTab('shorts')"
+                    class="tab-btn pb-3 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap"
+                    data-target="shorts">Shorts 策略與分流</button>
+                <button onclick="switchTab('live')"
+                    class="tab-btn pb-3 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap"
+                    data-target="live">直播功能與變現</button>
+                <button onclick="switchTab('niche')"
+                    class="tab-btn pb-3 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap"
+                    data-target="niche">語音摘要頻道應用</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- SECTION 1: OVERVIEW -->
+        <section id="overview" class="content-section fade-in">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">三大影音格式市場趨勢</h1>
+                <p class="text-slate-600">本區塊展示 YouTube 平台上常規影音 (VOD)、短影音 (Shorts) 與直播 (Live)
+                    的近期成長動能與特性比較。透過數據，我們能清晰看見平台流量紅利的轉移方向。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Trend Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700">平台流量成長趨勢 (預估指數)</h3>
+                    <p class="text-sm text-slate-500 mb-4">Shorts 展現爆發性成長，而常態影音與直播則保持穩定上升的長尾效應。</p>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Radar Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700">影音格式優勢比較</h3>
+                    <p class="text-sm text-slate-500 mb-4">不同格式在觸及率、粉絲黏著度、製作成本與變現能力上的表現差異。</p>
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Takeaways -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                <h4 class="font-bold text-blue-800 mb-2">💡 核心洞察</h4>
+                <ul class="list-disc pl-5 text-blue-900 space-y-1">
+                    <li><strong>Shorts (短影音)</strong> 是目前獲取「新觀眾」與「大量曝光」的最強武器，演算法對其極度傾斜。</li>
+                    <li><strong>Live (直播)</strong> 是建立「粉絲忠誠度」與「直接變現 (Super Chat/會員)」的最佳管道。</li>
+                    <li><strong>VOD (長影音)</strong> 仍然是建立權威性、帶來長尾搜尋流量與穩定廣告收入的基石。</li>
+                </ul>
+            </div>
+        </section>
+
+
+        <!-- SECTION 2: SHORTS STRATEGY -->
+        <section id="shorts" class="content-section hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">Shorts 市場評估與頻道架構策略</h1>
+                <p class="text-slate-600">Shorts 是目前的流量密碼，但許多創作者擔心「長短影音混合會不會讓演算法混亂？」本區將透過互動決策樹幫您分析是否該開啟第二頻道。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Shorts Market Analysis -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-xl font-bold mb-4 text-slate-700">我要利用 Shorts 嗎？</h3>
+                    <div class="text-5xl font-black text-red-500 mb-4">絕對要。</div>
+                    <p class="text-slate-600 mb-4">
+                        目前的 YouTube 演算法將大量的推送資源給予 Shorts。對於剛起步或正在成長的頻道，Shorts
+                        就像是<strong>「廣發傳單」</strong>，能以極低的門檻讓陌生觀眾認識你。
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <span class="text-green-500 mr-2">✔</span>
+                            <span
+                                class="text-sm text-slate-700"><strong>優點：</strong>高曝光、降低訂閱門檻、適合碎片化時間、可作為長影片的預告片。</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-red-500 mr-2">✖</span>
+                            <span
+                                class="text-sm text-slate-700"><strong>缺點：</strong>觀眾忠誠度較低、單次觀看廣告收益極低、可能吸引到非核心受眾。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Channel Decision Tool -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+                    <h3 class="text-xl font-bold mb-4 text-slate-700">主頻道 vs 第二頻道 決策器</h3>
+                    <p class="text-sm text-slate-500 mb-6">請回答以下問題，評估你的 Shorts 該放在哪裡：</p>
+
+                    <div id="decision-step-1"
+                        class="flex-grow flex flex-col justify-center transition-all duration-300">
+                        <p class="font-medium text-lg mb-4 text-center">你的 Shorts 內容，跟你的長影片內容，<br> 目標受眾(TA)是一樣的嗎？</p>
+                        <div class="flex gap-4 justify-center">
+                            <button onclick="handleDecision('same_ta')"
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 px-6 rounded-lg transition-colors">是，受眾高度重疊</button>
+                            <button onclick="handleDecision('diff_ta')"
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 px-6 rounded-lg transition-colors">否，我想拍點不一樣的</button>
+                        </div>
+                    </div>
+
+                    <!-- Result: Same Channel -->
+                    <div id="result-same" class="hidden flex-grow flex-col justify-center bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-green-800 text-center mb-2">建議：放在「主頻道」</h4>
+                        <p class="text-sm text-green-900 mb-4">
+                            YouTube 官方近期已優化演算法，長短影音的受眾可以有效分離且互相導流。只要主題一致，在同頻道發布 Shorts 可以快速衝高訂閱數，且不會「打架」，反而能形成
+                            <strong>Shorts 圈粉 -> 長影片固粉</strong> 的正向循環。
+                        </p>
+                        <button onclick="resetDecision()"
+                            class="text-green-700 underline text-sm text-center">重新測驗</button>
+                    </div>
+
+                    <!-- Result: Different Channel -->
+                    <div id="result-diff" class="hidden flex-grow flex-col justify-center bg-orange-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-orange-800 text-center mb-2">建議：開啟「第二頻道」</h4>
+                        <p class="text-sm text-orange-900 mb-4">
+                            如果你的主頻道是「嚴肅財經分析」，但 Shorts 想拍「搞笑日常」，這會嚴重混淆演算法對你頻道的定位，導致長影片點閱率暴跌（內容打架）。此時強烈建議分開經營！
+                        </p>
+                        <button onclick="resetDecision()"
+                            class="text-orange-700 underline text-sm text-center">重新測驗</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 3: LIVE ANALYSIS -->
+        <section id="live" class="content-section hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">YouTube 直播 (Live) 深度解析</h1>
+                <p class="text-slate-600">直播不只是打遊戲。對於知識型或資訊型頻道，直播是拉近距離、即時反饋與強力變現的終極武器。本區塊將拆解直播的核心功能。</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+
+                    <!-- Feature 1 -->
+                    <div class="p-6 hover:bg-slate-50 transition-colors cursor-pointer"
+                        onmouseover="updateLivePreview('chat')">
+                        <div class="text-3xl mb-3">💬</div>
+                        <h3 class="font-bold text-lg mb-2">高強度即時互動</h3>
+                        <p class="text-sm text-slate-600">觀眾留存率遠高於一般影片。透過即時問答 (Q&A)，能大幅提升粉絲的參與感與被重視感。</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="p-6 hover:bg-slate-50 transition-colors cursor-pointer"
+                        onmouseover="updateLivePreview('money')">
+                        <div class="text-3xl mb-3">💰</div>
+                        <h3 class="font-bold text-lg mb-2">多元變現工具</h3>
+                        <p class="text-sm text-slate-600">整合超級留言 (Super Chat)、超級貼圖與頻道會員制。死忠粉絲的贊助意願在直播當下最高。</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="p-6 hover:bg-slate-50 transition-colors cursor-pointer"
+                        onmouseover="updateLivePreview('algo')">
+                        <div class="text-3xl mb-3">📈</div>
+                        <h3 class="font-bold text-lg mb-2">演算法推播紅利</h3>
+                        <p class="text-sm text-slate-600">YouTube 經常將直播中的頻道推送到首頁醒目位置；直播結束後的存檔 (VOD) 也能持續帶來長尾觀看。</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Dynamic Detail Panel -->
+            <div
+                class="bg-slate-800 text-white p-8 rounded-xl relative overflow-hidden h-64 flex flex-col justify-center">
+                <!-- Abstract background shapes -->
+                <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-slate-700 opacity-50"></div>
+                <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-red-600 opacity-20"></div>
+
+                <div id="live-detail-content" class="relative z-10 transition-opacity duration-300">
+                    <h2 class="text-2xl font-bold text-red-400 mb-2">👈 懸停上方圖示以查看功能詳情</h2>
+                    <p class="text-slate-300">了解直播如何為您的頻道帶來質的飛躍，以及如何運用這些功能強化社群連結。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: NICHE APPLICATION (Voice Summary) -->
+        <section id="niche" class="content-section hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">實戰應用：「生成語音摘要」頻道策略</h1>
+                <p class="text-slate-600">結合您正在研究的「生成語音摘要」技術，我們為您規劃了涵蓋 Shorts、長影音與直播的三位一體作戰藍圖。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Shorts Strategy -->
+                <div class="bg-white border-t-4 border-red-500 rounded-b-xl shadow-md p-6">
+                    <div class="font-bold text-red-500 mb-2 tracking-wide text-sm">STEP 1: 流量漏斗頂端</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Shorts 短影音</h3>
+                    <p class="text-slate-600 mb-4 font-medium">定位：引流神器、話題製造機</p>
+                    <ul class="space-y-2 text-sm text-slate-600 list-disc pl-4">
+                        <li>擷取時事新聞、長篇 Podcast 的最精華 60 秒。</li>
+                        <li>配上吸睛字幕與您的「AI 生成語音」。</li>
+                        <li>結尾 Call to Action (CTA)：「想聽完整分析，點擊下方連結」。</li>
+                        <li><strong>發布頻率：</strong>一週 3-5 支。</li>
+                    </ul>
+                </div>
+
+                <!-- VOD Strategy -->
+                <div class="bg-white border-t-4 border-blue-500 rounded-b-xl shadow-md p-6">
+                    <div class="font-bold text-blue-500 mb-2 tracking-wide text-sm">STEP 2: 建立權威與深度</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">常態長影片 (VOD)</h3>
+                    <p class="text-slate-600 mb-4 font-medium">定位：知識沉澱、SEO 搜尋流量</p>
+                    <ul class="space-y-2 text-sm text-slate-600 list-disc pl-4">
+                        <li>針對特定主題（如科技趨勢、書籍）製作 10-15 分鐘的深度摘要。</li>
+                        <li>除了語音，畫面搭配相關素材、重點字卡或心智圖。</li>
+                        <li>這是累積觀看時長與賺取廣告費的主力。</li>
+                        <li><strong>發布頻率：</strong>一週 1 支。</li>
+                    </ul>
+                </div>
+
+                <!-- Live Strategy -->
+                <div class="bg-white border-t-4 border-green-500 rounded-b-xl shadow-md p-6">
+                    <div class="font-bold text-green-500 mb-2 tracking-wide text-sm">STEP 3: 粉絲變現與黏著</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">直播 (Live)</h3>
+                    <p class="text-slate-600 mb-4 font-medium">定位：社群互動、幕後揭秘</p>
+                    <ul class="space-y-2 text-sm text-slate-600 list-disc pl-4">
+                        <li><strong>主題點子：</strong>「如何製作生成語音摘要？技術大公開」、「與觀眾即時點題，當場用 AI 生成摘要」。</li>
+                        <li>開啟贊助功能，解答觀眾對於 AI 工具或內容的問題。</li>
+                        <li>建立專屬社群感。</li>
+                        <li><strong>發布頻率：</strong>兩週 1 次或每月 1 次。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-slate-800 rounded-xl p-6 text-center">
+                <h3 class="text-xl font-bold text-white mb-2">總結建議</h3>
+                <p class="text-slate-300">
+                    針對您的情況：<strong>不建議開設第二頻道</strong>。請將 Shorts
+                    作為前鋒，吸引對「知識摘要」有興趣的廣大受眾；將他們導流到您的長影片看深度內容；最後透過直播建立個人品牌與忠誠度。這三者在同一個頻道內相輔相成，不會打架！
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center text-slate-500 text-sm">
+            本互動報告基於 2024-2027 年 YouTube 演算法趨勢與市場動態生成。
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Navigation Logic ---
+        function switchTab(tabId) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.target === tabId) btn.classList.add('active');
+            });
+
+            // Update content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('fade-in');
+            });
+
+            const activeSection = document.getElementById(tabId);
+            activeSection.classList.remove('hidden');
+            // Small timeout to allow display:block to apply before animation
+            setTimeout(() => {
+                activeSection.classList.add('fade-in');
+            }, 10);
+        }
+
+        // --- Shorts Strategy Decision Logic ---
+        function handleDecision(choice) {
+            document.getElementById('decision-step-1').classList.add('hidden');
+            if (choice === 'same_ta') {
+                document.getElementById('result-same').classList.remove('hidden');
+                document.getElementById('result-same').classList.add('flex');
+            } else {
+                document.getElementById('result-diff').classList.remove('hidden');
+                document.getElementById('result-diff').classList.add('flex');
+            }
+        }
+
+        function resetDecision() {
+            document.getElementById('result-same').classList.add('hidden');
+            document.getElementById('result-same').classList.remove('flex');
+            document.getElementById('result-diff').classList.add('hidden');
+            document.getElementById('result-diff').classList.remove('flex');
+            document.getElementById('decision-step-1').classList.remove('hidden');
+        }
+
+        // --- Live Features Interaction Logic ---
+        const liveDetails = {
+            'chat': {
+                title: '💬 高強度即時互動',
+                desc: '與預錄影片不同，直播允許創作者根據觀眾留言即時改變走向。這對於「摘要型」頻道非常有用，你可以即時詢問觀眾「大家對剛剛那段摘要有什麼想法？」，建立極高的參與度。'
+            },
+            'money': {
+                title: '💰 多元變現工具 (Super Chat & 會員)',
+                desc: 'YouTube 數據顯示，觀眾在直播當下的打賞衝動遠高於看一般影片。透過設定專屬表情符號、會員限定徽章，能將免費觀眾轉化為付費鐵粉。'
+            },
+            'algo': {
+                title: '📈 演算法推播紅利與長尾',
+                desc: '直播結束後會自動轉為 VOD。由於直播通常時間長，能大幅貢獻頻道的「總觀看時長」，這對於提升頻道權重極有幫助。同時，你可以將直播的精華剪輯成多支 Shorts 進行二次傳播。'
+            }
+        };
+
+        function updateLivePreview(key) {
+            const contentDiv = document.getElementById('live-detail-content');
+            contentDiv.style.opacity = 0;
+
+            setTimeout(() => {
+                contentDiv.innerHTML = `
+                    <h2 class="text-3xl font-bold text-white mb-3">${liveDetails[key].title}</h2>
+                    <p class="text-lg text-slate-300 leading-relaxed max-w-2xl">${liveDetails[key].desc}</p>
+                `;
+                contentDiv.style.opacity = 1;
+            }, 200);
+        }
+
+        // --- Chart.js Implementations ---
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // 1. Trend Line Chart
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: ['2023', '2024', '2025', '2026 (當前)', '2027 (預估)'],
+                    datasets: [
+                        {
+                            label: 'Shorts 流量指數',
+                            data: [50, 85, 120, 150, 180],
+                            borderColor: '#ef4444', // Red
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: '長影音 (VOD) 流量指數',
+                            data: [85, 88, 92, 95, 98],
+                            borderColor: '#3b82f6', // Blue
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: '直播 (Live) 參與指數',
+                            data: [40, 55, 65, 75, 85],
+                            borderColor: '#22c55e', // Green
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: '平台流量與參與度指數' }
+                        }
+                    }
+                }
+            });
+
+            // 2. Radar Chart for Format Comparison
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['新觀眾觸及率', '粉絲忠誠度', '直接變現力 (打賞)', '廣告收益(RPM)', '製作時間成本(反向)'],
+                    datasets: [
+                        {
+                            label: 'Shorts',
+                            data: [100, 30, 10, 20, 90], // High reach, low loyalty, low money, low effort (high score for low effort)
+                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                            borderColor: '#ef4444',
+                            pointBackgroundColor: '#ef4444',
+                        },
+                        {
+                            label: 'VOD 長影片',
+                            data: [50, 70, 40, 90, 40], // Medium reach, high loyalty, high ads, high effort
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: '#3b82f6',
+                            pointBackgroundColor: '#3b82f6',
+                        },
+                        {
+                            label: 'Live 直播',
+                            data: [30, 100, 100, 50, 70], // Low reach, highest loyalty, highest direct money, medium effort
+                            backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                            borderColor: '#22c55e',
+                            pointBackgroundColor: '#22c55e',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false } // Hide numbers to keep it clean
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
