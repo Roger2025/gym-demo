@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: rgb(238, 240, 146);
+        }
+
+        .sub-title {
+            background-color: aqua;
+            color: blue;
+        }
+    </style>
 </head>
 <style>
 
@@ -12,7 +23,7 @@
 
 <body>
     <!-- 內容區 -->
-    <h1>何謂健身?</h1>
+    <h1 style="background-color: brown;color: white;">何謂健身?</h1>
     <img width="100%" height="400pxpx"
         src="https://cc.tvbs.com.tw/img/program/upload/2023/09/21/20230921185731-5cce9eea.jpg" alt="">
     <h3>健身，英文稱為workout，健身這兩個字拆開來的意思就是健康身體，<br>
@@ -31,8 +42,8 @@
         </b>
     </p>
     <hr>
-    <h2>健身的10個好處</h2>
-    <ol type="1">
+    <h2 class="sub-title">健身的10個好處</h2>
+    <ol type="1" style="text-align: left;">
         <li>增強肌肉力量</li>
         <li>提高心肺功能</li>
         <li>改善身體姿勢</li>
@@ -45,7 +56,7 @@
         <li>提高生活品質</li>
     </ol>
     <hr>
-    <h2>好文章連結</h2>
+    <h2 class="sub-title">好文章連結</h2>
     <li>
         <a target="_blank" href="https://www.youtube.com/shorts/a7CHqhhea0I">AI與人腦價值</a>
         <br>
@@ -58,7 +69,7 @@
         <a target="_blank" href="https://www.youtube.com/shorts/a7CHqhhea0I">AI與人腦價值</a>
     </li>
     <hr>
-    <h2>一天所需卡路里</h2>
+    <h2 class="sub-title">一天所需卡路里</h2>
     <table border="1">
         <thead>
             <tr>
@@ -96,12 +107,12 @@
         因此，這位民眾的BMI為23.4，屬於正常體重範圍內。
     </p>
     <hr>
-    <h2>健身照片</h2>
+    <h2 class="sub-title">健身照片</h2>
     <img width="33%" src="img/pic-1.jpg" alt="圖片消失!">
     <img width="33%" src="img/pic-2.jpg" alt="圖片消失!">
     <img width="33%" src="img/pic-3.jpg" alt="圖片消失!">
     <hr>
-    <h2>健身影片</h2>
+    <h2 class="sub-title">健身影片</h2>
     <iframe width="45%" height="385" src="https://www.youtube.com/embed/LFZp7wC01Dg" title="七分鐘運動 - 最基礎心肺有氧（無跳躍，低衝擊）"
         frameborder="0" allow="accelerometer;
      autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -115,12 +126,12 @@
         您的瀏覽器不支援視頻播放。
     </video>
     <hr>
-    <h2>表單</h2>
+    <h2 class="sub-title">表單</h2>
     <h3>需要更多資訊?免費索取健身資訊</h3>
     <p>前100名還贈送［我愛健身］書籍一本!</p>
     <form action="">
         <input type="checkbox" name="age">18歲
-        <select name="city" id="">
+        <select name="city" id="city">
             <option value="台北市">台北市</option>
             <option value="新北市">新北市</option>
             <option value="桃園市">桃園市</option>
